@@ -5,17 +5,54 @@
  */
 package fileservice;
 
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.List;
+
 /**
  *
  * @author sawyer
  */
 public class FileService {
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        // TODO code application logic here
+    private FileReaderStrategy reader;
+    private FileWriterStrategy writer;
+    private String readFilePath;
+    private String writeFilePath;
+    private FileFormatStrategy readFormat;
+    private FileFormatStrategy writeFormat;
+    
+    
+    public FileService(FileReaderStrategy reader, FileWriterStrategy writer) {
+        this(reader);
+        this.writer = writer;
+        this.writeFilePath = writer.getFilePath();
+        this.writeFormat = writer.getFormatStrategy();
+        
     }
     
+    public FileService(FileReaderStrategy reader) {
+        this.reader = reader;
+        this.readFilePath = reader.getFilePath();
+        this.readFormat = reader.getFormatStrategy();
+    }
+    
+    public FileService(FileWriterStrategy writer) {
+        this.writer = writer;
+        this.writeFilePath = writer.getFilePath();
+        this.writeFormat = writer.getFormatStrategy();
+    }
+    
+    public List<LinkedHashMap<String, String>> getAllRecords() throws IOException {
+        return reader.getAllRecords();
+    }
+    
+    public void recordOverWrite(List<LinkedHashMap<String, String>> data, boolean useHeader) throws IOException {
+        writer.saveOrUpdate(data, useHeader);
+    }
+    
+    public void recordAddNew(List<LinkedHashMap<String, String>> data, boolean useHeader) throws IOException {
+        writer.addNewRecords(data, useHeader);
+    }
 }
+
